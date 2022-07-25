@@ -18,20 +18,17 @@ package adapter
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"os"
 
 	"go.uber.org/zap"
-
+	"knative.dev/eventing/pkg/adapter/v2/util/crstatusevent"
 	"knative.dev/pkg/logging"
 	"knative.dev/pkg/logging/logkey"
 	"knative.dev/pkg/metrics"
 	"knative.dev/pkg/profiling"
 	"knative.dev/pkg/tracing"
 	tracingconfig "knative.dev/pkg/tracing/config"
-
-	"knative.dev/eventing/pkg/adapter/v2/util/crstatusevent"
 )
 
 const (
@@ -231,10 +228,9 @@ func (c *tracingConfiguratorFromConfigMap) SetupTracing(ctx context.Context, cfg
 	logger := logging.FromContext(ctx)
 
 	cmw := ConfigWatcherFromContext(ctx)
-	service := fmt.Sprintf("%s.%s", cfg.InstanceName, NamespaceFromContext(ctx))
 
 	logger.Infof("Adding Watcher on ConfigMap %s for tracing", c.configMapName)
-	if err := tracing.SetupDynamicPublishing(logger, cmw, service, c.configMapName); err != nil {
+	if err := tracing.SetupDynamicPublishing(logger, cmw, "", c.configMapName); err != nil {
 		logger.Errorw("Error setting up trace publishing. Tracing configuration will be ignored.", zap.Error(err))
 	}
 }

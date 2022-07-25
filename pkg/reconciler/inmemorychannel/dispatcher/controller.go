@@ -20,34 +20,27 @@ import (
 	"context"
 	"time"
 
-	"knative.dev/pkg/injection"
-
-	"k8s.io/client-go/tools/cache"
-
 	"github.com/google/uuid"
 	"github.com/kelseyhightower/envconfig"
-	"knative.dev/pkg/kmeta"
-
-	"knative.dev/eventing/pkg/channel/multichannelfanout"
-	"knative.dev/eventing/pkg/kncloudevents"
-
-	"knative.dev/pkg/logging"
-
 	"go.uber.org/zap"
-	"knative.dev/pkg/configmap"
-	configmapinformer "knative.dev/pkg/configmap/informer"
-	"knative.dev/pkg/controller"
-	pkgreconciler "knative.dev/pkg/reconciler"
-
-	"knative.dev/pkg/tracing"
-	tracingconfig "knative.dev/pkg/tracing/config"
-
+	"k8s.io/client-go/tools/cache"
 	"knative.dev/eventing/pkg/apis/eventing"
 	"knative.dev/eventing/pkg/channel"
+	"knative.dev/eventing/pkg/channel/multichannelfanout"
 	eventingclient "knative.dev/eventing/pkg/client/injection/client"
 	inmemorychannelinformer "knative.dev/eventing/pkg/client/injection/informers/messaging/v1/inmemorychannel"
 	inmemorychannelreconciler "knative.dev/eventing/pkg/client/injection/reconciler/messaging/v1/inmemorychannel"
 	"knative.dev/eventing/pkg/inmemorychannel"
+	"knative.dev/eventing/pkg/kncloudevents"
+	"knative.dev/pkg/configmap"
+	configmapinformer "knative.dev/pkg/configmap/informer"
+	"knative.dev/pkg/controller"
+	"knative.dev/pkg/injection"
+	"knative.dev/pkg/kmeta"
+	"knative.dev/pkg/logging"
+	pkgreconciler "knative.dev/pkg/reconciler"
+	"knative.dev/pkg/tracing"
+	tracingconfig "knative.dev/pkg/tracing/config"
 )
 
 const (
@@ -78,7 +71,7 @@ func NewController(
 
 	// Setup trace publishing.
 	iw := cmw.(*configmapinformer.InformedWatcher)
-	if err := tracing.SetupDynamicPublishing(logger, iw, "imc-dispatcher", tracingconfig.ConfigName); err != nil {
+	if err := tracing.SetupDynamicPublishing(logger, iw, "", tracingconfig.ConfigName); err != nil {
 		logger.Panicw("Error setting up trace publishing", zap.Error(err))
 	}
 	var env envConfig
